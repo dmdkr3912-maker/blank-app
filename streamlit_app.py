@@ -74,11 +74,20 @@ def build_agent(tools):
 # --------------------------------------------------------------------
 # 4. Agent 실행 함수 (툴 사용 내역 제거)
 # --------------------------------------------------------------------
+# def ask_agent(agent_executor, question: str):
+#     result = agent_executor.invoke({"input": question})
+#     answer = result["output"]
+#     return f"답변:\n{answer}"
 def ask_agent(agent_executor, question: str):
     result = agent_executor.invoke({"input": question})
     answer = result["output"]
-    return f"답변:\n{answer}"
 
+    # intermediate_steps에서 마지막만 가져오기
+    if result.get("intermediate_steps"):
+        last_action, _ = result["intermediate_steps"][-1]
+        answer += f"\n\n출처:\n- Tool: {last_action.tool}, Query: {last_action.tool_input}"
+
+    return f"답변:\n{answer}"
 
 # --------------------------------------------------------------------
 # 5. Streamlit 메인
